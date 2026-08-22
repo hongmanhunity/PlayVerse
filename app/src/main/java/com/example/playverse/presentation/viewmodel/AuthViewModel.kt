@@ -56,6 +56,30 @@ class AuthViewModel(
         }
     }
 
+    fun loginWithGoogle(email: String, name: String? = null, avatar: String? = null) {
+        if (email.isBlank()) {
+            _uiState.value = AuthUiState.Error("Email Google không hợp lệ!")
+            return
+        }
+
+        viewModelScope.launch {
+            _uiState.value = AuthUiState.Loading
+            val googleId = "google_${email.trim()}"
+            val result = authRepository.loginWithGoogle(
+                email = email.trim(),
+                name = name?.trim(),
+                avatar = avatar,
+                googleId = googleId
+            )
+            result.onSuccess { user ->
+                _currentUser.value = user
+                _uiState.value = AuthUiState.Success(user, "Đăng nhập Google thành công!")
+            }.onFailure { exception ->
+                _uiState.value = AuthUiState.Error(exception.message ?: "Đăng nhập Google thất bại!")
+            }
+        }
+    }
+
     fun logout() {
         authRepository.logout()
         _currentUser.value = null

@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.playverse.domain.model.Game
 import com.example.playverse.presentation.component.common.BottomNavBar
 import com.example.playverse.presentation.component.home.HomeBanner
 import com.example.playverse.presentation.component.home.HomeGameGridSection
@@ -30,7 +31,8 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: GameViewModel,
     onNavigateToAllGames: () -> Unit = {},
-    onTabSelected: (String) -> Unit = {}
+    onTabSelected: (String) -> Unit = {},
+    onGameClick: (Game) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -67,18 +69,20 @@ fun HomeScreen(
                                 .padding(bottom = 100.dp),
                             verticalArrangement = Arrangement.spacedBy(24.dp)
                         ) {
-                            HomeBanner()
+                            HomeBanner(banners = state.banners)
 
                             HomeGameGridSection(
                                 title = "Popular Game",
                                 games = state.popularGames.ifEmpty { state.games.take(8) },
-                                onSeeAllClick = onNavigateToAllGames
+                                onSeeAllClick = onNavigateToAllGames,
+                                onGameClick = onGameClick
                             )
 
                             HomeGameGridSection(
                                 title = "Flash Game",
                                 games = state.flashGames.ifEmpty { state.games.takeLast(4) },
-                                onSeeAllClick = onNavigateToAllGames
+                                onSeeAllClick = onNavigateToAllGames,
+                                onGameClick = onGameClick
                             )
                         }
                     }

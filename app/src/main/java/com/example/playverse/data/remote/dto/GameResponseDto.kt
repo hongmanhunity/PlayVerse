@@ -1,4 +1,4 @@
-package com.example.playverse.data.remote
+package com.example.playverse.data.remote.dto
 
 import com.google.gson.annotations.SerializedName
 

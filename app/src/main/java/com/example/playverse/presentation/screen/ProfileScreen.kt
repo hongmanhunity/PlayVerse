@@ -1,5 +1,9 @@
 package com.example.playverse.presentation.screen
 
+import android.net.Uri
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -9,21 +13,27 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.HelpOutline
+import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import com.example.playverse.data.local.UserPreferences
 import com.example.playverse.domain.model.User
 import com.example.playverse.presentation.component.common.BottomNavBar
 
 /**
- * SCREEN: ProfileScreen (Màn hình Cá nhân)
+ * SCREEN: ProfileScreen (Kéo chữ Profile và toàn bộ nội dung lên sát mép trên)
  * VỊ TRÍ: presentation/screen/ProfileScreen.kt
  */
 @Composable
@@ -37,32 +47,52 @@ fun ProfileScreen(
     onTabSelected: (String) -> Unit = {},
     onCenterSearchClick: () -> Unit = {}
 ) {
-    val backgroundColor = Color(0xFFF4F7FC)
+    val context = LocalContext.current
+    val userPreferences = remember(context) { UserPreferences(context) }
+
     val primaryTextColor = Color(0xFF191C24)
-    val secondaryTextColor = Color(0xFF8A94A6)
+    val secondaryTextColor = Color(0xFF64748B)
     val brandBlue = Color(0xFF0066FF)
 
     val displayName = user?.name?.ifEmpty { "PlayVerse Gamer" } ?: "PlayVerse Gamer"
     val displayEmail = user?.email?.ifEmpty { "gamer@playverse.com" } ?: "gamer@playverse.com"
     val avatarInitial = displayName.take(1).uppercase()
+    val userIdCode = if (!user?.id.isNullOrEmpty()) user.id else "Chưa cập nhật"
+
+    var currentAvatarUri by remember(user) {
+        mutableStateOf(user?.avatarUrl ?: userPreferences.getUser()?.avatarUrl)
+    }
+
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            currentAvatarUri = it.toString()
+            userPreferences.saveAvatarUri(it.toString())
+            Toast.makeText(context, "Cập nhật ảnh đại diện thành công!", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(backgroundColor)
+            .background(Color.White)
     ) {
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
         ) {
+            // Header Profile đẩy sát lên trên
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 16.dp),
+                    .padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = "Profile",
-                    fontSize = 22.sp,
+                    fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     color = primaryTextColor
                 )
@@ -73,123 +103,114 @@ fun ProfileScreen(
                     .weight(1f)
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 20.dp)
+                    .padding(horizontal = 24.dp)
                     .padding(bottom = 100.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp)
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 if (!isLoggedIn) {
-                    Surface(
-                        shape = RoundedCornerShape(24.dp),
-                        color = Color.White,
-                        shadowElevation = 2.dp,
-                        modifier = Modifier.fillMaxWidth()
+                    // Chưa đăng nhập (Hiển thị đẩy cao)
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Column(
+                        Text(
+                            text = "Bạn chưa đăng nhập",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = primaryTextColor
+                        )
+
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        Text(
+                            text = "Vui lòng đăng nhập để xem thông tin cá nhân",
+                            fontSize = 14.sp,
+                            color = secondaryTextColor
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Button(
+                            onClick = onNavigateToLogin,
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = brandBlue),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(24.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
+                                .height(48.dp)
                         ) {
-                            Surface(
-                                shape = CircleShape,
-                                color = brandBlue.copy(alpha = 0.1f),
-                                modifier = Modifier.size(80.dp)
-                            ) {
-                                Box(contentAlignment = Alignment.Center) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.Person,
-                                        contentDescription = "Guest Avatar",
-                                        tint = brandBlue,
-                                        modifier = Modifier.size(44.dp)
-                                    )
-                                }
-                            }
-
-                            Spacer(modifier = Modifier.height(16.dp))
-
                             Text(
-                                text = "Bạn chưa đăng nhập",
-                                fontSize = 20.sp,
+                                text = "Đăng Nhập",
+                                fontSize = 15.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = primaryTextColor
+                                color = Color.White
                             )
+                        }
 
-                            Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
 
+                        OutlinedButton(
+                            onClick = onNavigateToRegister,
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = brandBlue),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(48.dp)
+                        ) {
                             Text(
-                                text = "Đăng nhập hoặc tạo tài khoản để trải nghiệm đầy đủ các tính năng của PlayVerse!",
-                                fontSize = 14.sp,
-                                color = secondaryTextColor,
-                                modifier = Modifier.padding(horizontal = 8.dp)
+                                text = "Tạo Tài Khoản Mới",
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Bold
                             )
-
-                            Spacer(modifier = Modifier.height(24.dp))
-
-                            Button(
-                                onClick = onNavigateToLogin,
-                                shape = RoundedCornerShape(14.dp),
-                                colors = ButtonDefaults.buttonColors(containerColor = brandBlue),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(50.dp)
-                            ) {
-                                Text(
-                                    text = "Đăng Nhập",
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.height(12.dp))
-
-                            OutlinedButton(
-                                onClick = onNavigateToRegister,
-                                shape = RoundedCornerShape(14.dp),
-                                colors = ButtonDefaults.outlinedButtonColors(contentColor = brandBlue),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(50.dp)
-                            ) {
-                                Text(
-                                    text = "Tạo Tài Khoản Mới",
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
                         }
                     }
                 } else {
-                    Surface(
-                        shape = RoundedCornerShape(24.dp),
-                        color = Color.White,
-                        shadowElevation = 2.dp,
-                        modifier = Modifier.fillMaxWidth()
+                    // Đã đăng nhập (Đẩy cao sát header)
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 4.dp)
                     ) {
+                        // Avatar + Nút đổi ảnh
                         Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(20.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            Surface(
-                                shape = CircleShape,
-                                color = brandBlue,
-                                modifier = Modifier.size(64.dp)
+                            Box(
+                                modifier = Modifier
+                                    .size(60.dp)
+                                    .clickable { imagePickerLauncher.launch("image/*") }
                             ) {
-                                Box(contentAlignment = Alignment.Center) {
-                                    Text(
-                                        text = avatarInitial,
-                                        fontSize = 24.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color.White
+                                if (!currentAvatarUri.isNullOrEmpty()) {
+                                    AsyncImage(
+                                        model = currentAvatarUri,
+                                        contentDescription = "User Avatar",
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .clip(CircleShape)
                                     )
+                                } else {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .background(brandBlue, shape = CircleShape),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = avatarInitial,
+                                            fontSize = 24.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color.White
+                                        )
+                                    }
                                 }
                             }
 
                             Spacer(modifier = Modifier.width(16.dp))
 
-                            Column(modifier = Modifier.weight(1f)) {
+                            Column {
                                 Text(
                                     text = displayName,
                                     fontSize = 18.sp,
@@ -198,78 +219,79 @@ fun ProfileScreen(
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    text = displayEmail,
+                                    text = "Đổi ảnh đại diện",
                                     fontSize = 13.sp,
-                                    color = secondaryTextColor
-                                )
-                            }
-
-                            Surface(
-                                shape = RoundedCornerShape(8.dp),
-                                color = Color(0xFFFFFBEB),
-                                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFDE68A)),
-                                modifier = Modifier.padding(start = 8.dp)
-                            ) {
-                                Text(
-                                    text = "VIP Member",
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color(0xFFD97706),
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                    fontWeight = FontWeight.Medium,
+                                    color = brandBlue,
+                                    modifier = Modifier.clickable { imagePickerLauncher.launch("image/*") }
                                 )
                             }
                         }
+
+                        Spacer(modifier = Modifier.height(14.dp))
+                        HorizontalDivider(color = Color(0xFFF1F5F9))
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        // Thông tin dạng chữ cơ bản
+                        Text(
+                            text = "Thông tin cá nhân",
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = primaryTextColor
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        ProfileInfoRow(label = "Họ và tên:", value = displayName)
+                        ProfileInfoRow(label = "Email:", value = displayEmail)
+                        ProfileInfoRow(label = "Mã tài khoản:", value = userIdCode)
                     }
                 }
 
+                Spacer(modifier = Modifier.height(4.dp))
+                HorizontalDivider(color = Color(0xFFF1F5F9))
+
                 Text(
                     text = "Cài đặt & Hỗ trợ",
-                    fontSize = 16.sp,
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
-                    color = primaryTextColor,
-                    modifier = Modifier.padding(top = 8.dp)
+                    color = primaryTextColor
                 )
 
-                Surface(
-                    shape = RoundedCornerShape(20.dp),
-                    color = Color.White,
-                    shadowElevation = 2.dp,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column {
-                        ProfileOptionItem(
-                            icon = Icons.Outlined.DarkMode,
-                            title = "Giao diện (Sáng / Tối)",
-                            subtitle = "Tự động theo hệ thống"
-                        )
-                        HorizontalDivider(color = Color(0xFFF1F5F9))
-                        ProfileOptionItem(
-                            icon = Icons.Outlined.Language,
-                            title = "Ngôn ngữ",
-                            subtitle = "Tiếng Việt"
-                        )
-                        HorizontalDivider(color = Color(0xFFF1F5F9))
-                        ProfileOptionItem(
-                            icon = Icons.AutoMirrored.Outlined.HelpOutline,
-                            title = "Trợ giúp & Hỗ trợ",
-                            subtitle = "FAQ và liên hệ hỗ trợ"
-                        )
-                        HorizontalDivider(color = Color(0xFFF1F5F9))
-                        ProfileOptionItem(
-                            icon = Icons.Outlined.Shield,
-                            title = "Điều khoản & Chính sách",
-                            subtitle = "Bảo mật dữ liệu cá nhân"
-                        )
+                // Cài đặt dạng chữ đơn giản
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    ProfileOptionItem(
+                        icon = Icons.Outlined.DarkMode,
+                        title = "Giao diện (Sáng / Tối)",
+                        subtitle = "Tự động theo hệ thống"
+                    )
+                    HorizontalDivider(color = Color(0xFFF1F5F9))
+                    ProfileOptionItem(
+                        icon = Icons.Outlined.Language,
+                        title = "Ngôn ngữ",
+                        subtitle = "Tiếng Việt"
+                    )
+                    HorizontalDivider(color = Color(0xFFF1F5F9))
+                    ProfileOptionItem(
+                        icon = Icons.AutoMirrored.Outlined.HelpOutline,
+                        title = "Trợ giúp & Hỗ trợ",
+                        subtitle = "FAQ và liên hệ"
+                    )
+                    HorizontalDivider(color = Color(0xFFF1F5F9))
+                    ProfileOptionItem(
+                        icon = Icons.Outlined.Shield,
+                        title = "Điều khoản & Chính sách",
+                        subtitle = "Bảo mật thông tin"
+                    )
 
-                        if (isLoggedIn) {
-                            HorizontalDivider(color = Color(0xFFF1F5F9))
-                            ProfileOptionItem(
-                                icon = Icons.Outlined.Logout,
-                                title = "Đăng xuất",
-                                titleColor = Color(0xFFFF3B30),
-                                onClick = onLogoutClick
-                            )
-                        }
+                    if (isLoggedIn) {
+                        HorizontalDivider(color = Color(0xFFF1F5F9))
+                        ProfileOptionItem(
+                            icon = Icons.AutoMirrored.Outlined.Logout,
+                            title = "Đăng xuất",
+                            titleColor = Color(0xFFEF4444),
+                            onClick = onLogoutClick
+                        )
                     }
                 }
             }
@@ -280,6 +302,32 @@ fun ProfileScreen(
             selectedTab = "Profile",
             onTabSelected = onTabSelected,
             onCenterSearchClick = onCenterSearchClick
+        )
+    }
+}
+
+@Composable
+private fun ProfileInfoRow(
+    label: String,
+    value: String
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 5.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = label,
+            fontSize = 14.sp,
+            color = Color(0xFF64748B)
+        )
+        Text(
+            text = value,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium,
+            color = Color(0xFF191C24)
         )
     }
 }
@@ -296,31 +344,31 @@ private fun ProfileOptionItem(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() }
-            .padding(horizontal = 18.dp, vertical = 16.dp),
+            .padding(vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             imageVector = icon,
             contentDescription = title,
             tint = titleColor,
-            modifier = Modifier.size(22.dp)
+            modifier = Modifier.size(20.dp)
         )
 
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(14.dp))
 
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = title,
-                fontSize = 15.sp,
+                fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = titleColor
             )
             if (subtitle != null) {
-                Spacer(modifier = Modifier.height(2.dp))
+                Spacer(modifier = Modifier.height(1.dp))
                 Text(
                     text = subtitle,
                     fontSize = 12.sp,
-                    color = Color(0xFF8A94A6)
+                    color = Color(0xFF64748B)
                 )
             }
         }
@@ -328,8 +376,8 @@ private fun ProfileOptionItem(
         Icon(
             imageVector = Icons.Outlined.ChevronRight,
             contentDescription = "Arrow Right",
-            tint = Color(0xFFCBD5E1),
-            modifier = Modifier.size(20.dp)
+            tint = Color(0xFF94A3B8),
+            modifier = Modifier.size(18.dp)
         )
     }
 }

@@ -1,4 +1,4 @@
-package com.example.playverse.data.remote
+package com.example.playverse.data.remote.dto
 
 import com.google.gson.annotations.SerializedName
 
@@ -13,4 +13,6 @@ data class GameDto(
     @SerializedName("size") val size: String? = null,
     @SerializedName("averageRating") val averageRating: Float? = null,
     @SerializedName("thumbnail") val thumbnail: String? = null,
+    @SerializedName("screenshots") val screenshots: List<String>? = null,
+    @SerializedName("images") val images: List<String>? = null
 )

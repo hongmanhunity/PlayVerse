@@ -1,8 +1,8 @@
 package com.example.playverse.data.repository
 
 import com.example.playverse.data.mapper.toDomain
-import com.example.playverse.data.remote.GameApiService
-import com.example.playverse.data.remote.GameResponseDto
+import com.example.playverse.data.remote.api.GameApiService
+import com.example.playverse.data.remote.dto.GameResponseDto
 import com.example.playverse.domain.model.Game
 import com.example.playverse.domain.repository.GameRepository
 

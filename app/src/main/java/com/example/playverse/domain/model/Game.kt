@@ -1,6 +1,5 @@
 package com.example.playverse.domain.model
 
-
 data class Game(
     val id: String,
     val title: String,
@@ -12,4 +11,6 @@ data class Game(
     val size: String,
     val averageRating: Float,
     val thumbnail: String,
+    val screenshots: List<String> = emptyList(),
+    val images: List<String> = screenshots
 )

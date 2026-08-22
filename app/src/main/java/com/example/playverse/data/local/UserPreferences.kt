@@ -15,6 +15,7 @@ class UserPreferences(context: Context) {
         private const val KEY_USER_ID = "user_id"
         private const val KEY_USER_NAME = "user_name"
         private const val KEY_USER_EMAIL = "user_email"
+        private const val KEY_AVATAR_URL = "avatar_url"
     }
 
     fun saveUser(user: User) {
@@ -24,8 +25,15 @@ class UserPreferences(context: Context) {
             putString(KEY_USER_ID, user.id)
             putString(KEY_USER_NAME, user.name)
             putString(KEY_USER_EMAIL, user.email)
+            if (!user.avatarUrl.isNullOrEmpty()) {
+                putString(KEY_AVATAR_URL, user.avatarUrl)
+            }
             apply()
         }
+    }
+
+    fun saveAvatarUri(uriString: String) {
+        prefs.edit().putString(KEY_AVATAR_URL, uriString).apply()
     }
 
     fun getUser(): User? {
@@ -36,7 +44,8 @@ class UserPreferences(context: Context) {
             id = prefs.getString(KEY_USER_ID, "") ?: "",
             name = prefs.getString(KEY_USER_NAME, "Game thủ") ?: "Game thủ",
             email = prefs.getString(KEY_USER_EMAIL, "") ?: "",
-            token = prefs.getString(KEY_TOKEN, "") ?: ""
+            token = prefs.getString(KEY_TOKEN, "") ?: "",
+            avatarUrl = prefs.getString(KEY_AVATAR_URL, null)
         )
     }
 

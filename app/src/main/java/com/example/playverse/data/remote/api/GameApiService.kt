@@ -1,5 +1,6 @@
-package com.example.playverse.data.remote
+package com.example.playverse.data.remote.api
 
+import com.example.playverse.data.remote.dto.GameResponseDto
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query

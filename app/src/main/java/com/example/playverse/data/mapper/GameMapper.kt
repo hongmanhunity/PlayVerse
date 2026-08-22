@@ -1,10 +1,13 @@
 package com.example.playverse.data.mapper
 
-import com.example.playverse.data.remote.GameDto
+import com.example.playverse.data.remote.dto.GameDto
 import com.example.playverse.domain.model.Game
-import kotlin.String
 
-fun GameDto.toDomain() : Game {
+fun GameDto.toDomain(): Game {
+    val screenshotList = this.screenshots?.takeIf { it.isNotEmpty() }
+        ?: this.images?.takeIf { it.isNotEmpty() }
+        ?: emptyList()
+
     return Game(
         id = this.id ?: "",
         title = this.title ?: "Không có tên",
@@ -15,6 +18,7 @@ fun GameDto.toDomain() : Game {
         description = this.description ?: "Chưa có mô tả.",
         size = this.size ?: "N/A",
         averageRating = this.averageRating ?: 0f,
-        thumbnail = this.thumbnail ?: ""
+        thumbnail = this.thumbnail ?: "",
+        screenshots = screenshotList
     )
 }

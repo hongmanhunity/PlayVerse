@@ -2,20 +2,25 @@ package com.example.playverse.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playverse.data.repository.BannerRepositoryImpl
 import com.example.playverse.data.repository.GameRepositoryImpl
+import com.example.playverse.domain.repository.BannerRepository
 import com.example.playverse.presentation.state.GameUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class GameViewModel(
-    private val repositoryImpl: GameRepositoryImpl
+    private val repositoryImpl: GameRepositoryImpl,
+    private val bannerRepository: BannerRepository = BannerRepositoryImpl()
 ): ViewModel() {
     private val _uiState = MutableStateFlow<GameUiState>(GameUiState.Loading)
     val uiState = _uiState.asStateFlow()
+
     init {
         getGames()
     }
+
     fun getGames() {
         viewModelScope.launch {
             _uiState.value = GameUiState.Loading
@@ -23,11 +28,13 @@ class GameViewModel(
                 val games = repositoryImpl.getGames()
                 val popular = try { repositoryImpl.getPopularGames() } catch (e: Exception) { emptyList() }
                 val flash = try { repositoryImpl.getFlashGames() } catch (e: Exception) { emptyList() }
+                val banners = bannerRepository.getBanners().getOrDefault(emptyList())
 
                 _uiState.value = GameUiState.Success(
                     games = games,
                     popularGames = if (popular.isNotEmpty()) popular else games.take(8),
-                    flashGames = if (flash.isNotEmpty()) flash else games.takeLast(4)
+                    flashGames = if (flash.isNotEmpty()) flash else games.takeLast(4),
+                    banners = banners
                 )
             } catch (e: Exception) {
                 _uiState.value = GameUiState.Error(e.message ?: "Lỗi kết nối API!")

@@ -61,4 +61,6 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.6.0")
     // Material Icons Extended
     implementation("androidx.compose.material:material-icons-extended")
+    // Official Google Play Services Auth SDK
+    implementation("com.google.android.gms:play-services-auth:21.2.0")
 }

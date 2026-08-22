@@ -7,7 +7,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.AccountBalanceWallet
+import androidx.compose.material.icons.outlined.Forum
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Icon
@@ -61,10 +61,10 @@ fun BottomNavBar(
                 )
 
                 NavItem(
-                    icon = Icons.Outlined.AccountBalanceWallet,
-                    label = "Wallet",
-                    isSelected = selectedTab == "Wallet",
-                    onClick = { onTabSelected("Wallet") }
+                    icon = Icons.Outlined.Forum,
+                    label = "Diễn Đàn",
+                    isSelected = selectedTab == "Community",
+                    onClick = { onTabSelected("Community") }
                 )
 
                 Spacer(modifier = Modifier.width(48.dp))
