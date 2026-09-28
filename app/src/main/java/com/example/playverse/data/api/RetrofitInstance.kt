@@ -6,10 +6,12 @@ import com.example.playverse.data.remote.api.CommunityApiService
 import com.example.playverse.data.remote.api.GameApiService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import com.example.playverse.data.remote.api.CommentApiService
+import com.example.playverse.data.remote.api.WishlistApiService
 
 object RetrofitInstance {
 
-    private const val BASE_URL = "https://playverse-server-9tvg.onrender.com/"
+    private const val BASE_URL = "http://192.168.100.8:5000/"
 
     private val retrofit: Retrofit by lazy {
         Retrofit.Builder()
@@ -32,5 +34,13 @@ object RetrofitInstance {
 
     val bannerApi: BannerApiService by lazy {
         retrofit.create(BannerApiService::class.java)
+    }
+
+    val commentApi: CommentApiService by lazy {
+        retrofit.create(CommentApiService::class.java)
+    }
+
+    val wishlistApi: WishlistApiService by lazy {
+        retrofit.create(WishlistApiService::class.java)
     }
 }

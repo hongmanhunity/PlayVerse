@@ -1,10 +1,11 @@
-package com.example.playverse.presentation.component.home
+﻿package com.example.playverse.presentation.component.home
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -26,15 +27,12 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.playverse.domain.model.Banner
 
-/**
- * COMPONENT HOME: HomeBanner (Slider cuộn ngang + Dots Indicator)
- * VỊ TRÍ: presentation/component/home/HomeBanner.kt
- */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeBanner(
     banners: List<Banner> = emptyList(),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onBannerClick: (Banner) -> Unit = {}
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -85,6 +83,7 @@ fun HomeBanner(
                             .fillMaxSize()
                             .clip(RoundedCornerShape(20.dp))
                             .background(Color(0xFF1E293B))
+                            .clickable { onBannerClick(banner) }
                     ) {
                         // Hình ảnh Banner
                         AsyncImage(

@@ -6,4 +6,5 @@ interface GameRepository {
     suspend fun getGames(): List<Game>
     suspend fun getPopularGames(): List<Game>
     suspend fun getFlashGames(): List<Game>
+    suspend fun getGameById(id: String): Game?
 }

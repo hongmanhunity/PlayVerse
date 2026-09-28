@@ -1,16 +1,76 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+# Built application files (Binaries & Packages)
+*.apk
+*.aar
+*.ap_
+*.aab
+*.dex
+
+# Java & Kotlin class files
+*.class
+
+# Build and generated outputs
+build/
+*/build/
+bin/
+gen/
+out/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Gradle files & cache
+.gradle/
+
+# Local configuration & environment (SENSITIVE)
 local.properties
+*.local.properties
+*.env
+.env.*
+secrets.properties
+keystore.properties
+signing.properties
+
+# Keystores, signing keys & certificates (CRITICAL SECURITY)
+*.jks
+*.keystore
+*.p12
+*.key
+*.pem
+*.bks
+*.pk8
+
+# Google Services & Cloud API Credentials (CRITICAL SECURITY)
+google-services.json
+credentials.json
+client_secret*.json
+serviceAccountKey*.json
+
+# Android Studio / IntelliJ IDEA (Local configurations & caches)
+*.iml
+.idea/
+.idea/caches/
+.idea/libraries/
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+.idea/deploymentTargetSelector.xml
+.idea/deviceManager.xml
+.navigation/
+
+# Kotlin cache & error logs
+.kotlin/
+*.log
+
+# OS & Temporary files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Miscellaneous local notes
 hoc.txt

@@ -1,11 +1,7 @@
-package com.example.playverse.data.remote.dto
+﻿package com.example.playverse.data.remote.dto
 
 import com.google.gson.annotations.SerializedName
 
-/**
- * REMOTE DTO: BannerDto & BannerResponseDto
- * VỊ TRÍ: data/remote/dto/BannerDto.kt
- */
 data class BannerResponseDto(
     @SerializedName("success") val success: Boolean,
     @SerializedName("count") val count: Int,

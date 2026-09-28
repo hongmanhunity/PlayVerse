@@ -1,4 +1,4 @@
-package com.example.playverse.presentation.component.auth
+﻿package com.example.playverse.presentation.component.auth
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,10 +16,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-/**
- * COMPONENT AUTH: SocialAuthButtons (Phong cách Basic - Modern - Clean)
- * VỊ TRÍ: presentation/component/auth/SocialAuthButtons.kt
- */
 @Composable
 fun SocialAuthButtons(
     onSocialClick: (provider: String) -> Unit = {}

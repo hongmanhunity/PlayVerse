@@ -1,22 +1,21 @@
-package com.example.playverse.presentation.screen
+﻿package com.example.playverse.presentation.screen
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.outlined.ChatBubbleOutline
-import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -26,14 +25,15 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.playverse.data.local.UserPreferences
 import com.example.playverse.domain.model.Post
-import com.example.playverse.presentation.component.common.BottomNavBar
-import com.example.playverse.presentation.viewmodel.CommunityUiState
+import com.example.playverse.presentation.component.common.PlayVerseHeader
+import com.example.playverse.presentation.state.CommunityUiState
 import com.example.playverse.presentation.viewmodel.CommunityViewModel
+import com.example.playverse.ui.theme.PlayVerseBrandBlue
+import com.example.playverse.ui.theme.PlayVerseDivider
+import com.example.playverse.ui.theme.PlayVerseTextBody
+import com.example.playverse.ui.theme.PlayVerseTextPrimary
+import com.example.playverse.ui.theme.PlayVerseTextSecondary
 
-/**
- * SCREEN: CommunityScreen (Diễn Đàn & Bài Viết Thảo Luận)
- * VỊ TRÍ: presentation/screen/CommunityScreen.kt
- */
 @Composable
 fun CommunityScreen(
     modifier: Modifier = Modifier,
@@ -48,10 +48,6 @@ fun CommunityScreen(
 
     var showCreateDialog by remember { mutableStateOf(false) }
 
-    val primaryTextColor = Color(0xFF191C24)
-    val secondaryTextColor = Color(0xFF64748B)
-    val brandBlue = Color(0xFF0066FF)
-
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -62,44 +58,10 @@ fun CommunityScreen(
                 .fillMaxSize()
                 .statusBarsPadding()
         ) {
-            // Header
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Diễn Đàn Game",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = primaryTextColor
-                )
+            // Header PlayVerse cơ bản thống nhất
+            PlayVerseHeader()
 
-                Button(
-                    onClick = { showCreateDialog = true },
-                    shape = RoundedCornerShape(10.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = brandBlue),
-                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Add,
-                        contentDescription = "Đăng bài",
-                        tint = Color.White,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = "Đăng bài",
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-                }
-            }
-
-            HorizontalDivider(color = Color(0xFFF1F5F9))
+            HorizontalDivider(color = PlayVerseDivider)
 
             Box(
                 modifier = Modifier
@@ -109,7 +71,7 @@ fun CommunityScreen(
                 when (val state = postsState) {
                     is CommunityUiState.Loading -> {
                         CircularProgressIndicator(
-                            color = brandBlue,
+                            color = PlayVerseBrandBlue,
                             modifier = Modifier.align(Alignment.Center)
                         )
                     }
@@ -127,24 +89,15 @@ fun CommunityScreen(
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             items(state.posts, key = { it.id }) { post ->
-                                PostCardItem(
-                                    post = post,
-                                    onLikeClick = {
-                                        if (userPreferences.isLoggedIn()) {
-                                            viewModel.toggleLike(user?.token ?: "", post.id)
-                                        } else {
-                                            Toast.makeText(context, "Vui lòng đăng nhập để thả tim!", Toast.LENGTH_SHORT).show()
-                                        }
-                                    }
-                                )
+                                PostCardItem(post = post)
                                 HorizontalDivider(
-                                    color = Color(0xFFF1F5F9),
+                                    color = PlayVerseDivider,
                                     modifier = Modifier.padding(top = 16.dp)
                                 )
                             }
 
                             item {
-                                Spacer(modifier = Modifier.height(100.dp))
+                                Spacer(modifier = Modifier.height(140.dp))
                             }
                         }
                     }
@@ -152,12 +105,58 @@ fun CommunityScreen(
             }
         }
 
-        BottomNavBar(
-            modifier = Modifier.align(Alignment.BottomCenter),
-            selectedTab = "Community",
-            onTabSelected = onTabSelected,
-            onCenterSearchClick = onCenterSearchClick
-        )
+        // Nút đăng bài nổi phong cách Floating Gradient Pill hiện đại
+        Surface(
+            onClick = {
+                if (userPreferences.isLoggedIn()) {
+                    showCreateDialog = true
+                } else {
+                    Toast.makeText(context, "Vui lòng đăng nhập để đăng bài!", Toast.LENGTH_SHORT).show()
+                }
+            },
+            shape = CircleShape,
+            color = Color.Transparent,
+            shadowElevation = 8.dp,
+            border = BorderStroke(1.dp, Color.White.copy(alpha = 0.35f)),
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .navigationBarsPadding()
+                .padding(end = 20.dp, bottom = 86.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .background(
+                        brush = Brush.horizontalGradient(
+                            colors = listOf(
+                                Color(0xFF2563EB), // PlayVerse Brand Blue
+                                Color(0xFF1D4ED8)  // Deep Royal Blue
+                            )
+                        ),
+                        shape = CircleShape
+                    )
+                    .padding(horizontal = 20.dp, vertical = 12.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Edit,
+                        contentDescription = "Đăng bài",
+                        tint = Color.White,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Text(
+                        text = "Đăng bài",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                        color = Color.White,
+                        letterSpacing = 0.2.sp
+                    )
+                }
+            }
+        }
 
         if (showCreateDialog) {
             CreatePostDialog(
@@ -184,11 +183,8 @@ fun CommunityScreen(
 
 @Composable
 private fun PostCardItem(
-    post: Post,
-    onLikeClick: () -> Unit
+    post: Post
 ) {
-    val brandBlue = Color(0xFF0066FF)
-
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -207,7 +203,7 @@ private fun PostCardItem(
                 Box(
                     modifier = Modifier
                         .size(38.dp)
-                        .background(brandBlue, shape = CircleShape),
+                        .background(PlayVerseBrandBlue, shape = CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -226,24 +222,24 @@ private fun PostCardItem(
                     text = post.authorName,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF191C24)
+                    color = PlayVerseTextPrimary
                 )
                 Text(
                     text = post.timeAgo,
                     fontSize = 11.sp,
-                    color = Color(0xFF64748B)
+                    color = PlayVerseTextSecondary
                 )
             }
 
             Surface(
-                color = brandBlue.copy(alpha = 0.08f),
+                color = PlayVerseBrandBlue.copy(alpha = 0.08f),
                 shape = RoundedCornerShape(6.dp)
             ) {
                 Text(
                     text = post.gameTitle,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Medium,
-                    color = brandBlue,
+                    color = PlayVerseBrandBlue,
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
                 )
             }
@@ -255,7 +251,7 @@ private fun PostCardItem(
             text = post.title,
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF191C24)
+            color = PlayVerseTextPrimary
         )
 
         Spacer(modifier = Modifier.height(4.dp))
@@ -263,49 +259,9 @@ private fun PostCardItem(
         Text(
             text = post.content,
             fontSize = 14.sp,
-            color = Color(0xFF475569),
+            color = PlayVerseTextBody,
             lineHeight = 20.sp
         )
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(20.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.clickable { onLikeClick() }
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.FavoriteBorder,
-                    contentDescription = "Like",
-                    tint = Color(0xFF64748B),
-                    modifier = Modifier.size(18.dp)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    text = "${post.likesCount}",
-                    fontSize = 13.sp,
-                    color = Color(0xFF64748B)
-                )
-            }
-
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Outlined.ChatBubbleOutline,
-                    contentDescription = "Comment",
-                    tint = Color(0xFF64748B),
-                    modifier = Modifier.size(18.dp)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    text = "${post.commentsCount}",
-                    fontSize = 13.sp,
-                    color = Color(0xFF64748B)
-                )
-            }
-        }
     }
 }
 
@@ -327,14 +283,14 @@ private fun CreatePostDialog(
                         onSubmit(title, content, gameTitle)
                     }
                 },
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0066FF))
+                colors = ButtonDefaults.buttonColors(containerColor = PlayVerseBrandBlue)
             ) {
                 Text(text = "Đăng Bài", color = Color.White)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(text = "Hủy", color = Color(0xFF64748B))
+                Text(text = "Hủy", color = PlayVerseTextSecondary)
             }
         },
         title = {

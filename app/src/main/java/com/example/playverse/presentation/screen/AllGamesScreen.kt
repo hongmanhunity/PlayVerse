@@ -1,4 +1,4 @@
-package com.example.playverse.presentation.screen
+﻿package com.example.playverse.presentation.screen
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
@@ -24,14 +24,14 @@ import androidx.compose.ui.unit.sp
 import com.example.playverse.domain.model.Game
 import com.example.playverse.presentation.component.allgames.AllGamesHeader
 import com.example.playverse.presentation.component.allgames.AllGamesItemRow
-import com.example.playverse.presentation.component.common.BottomNavBar
 import com.example.playverse.presentation.state.GameUiState
 import com.example.playverse.presentation.viewmodel.GameViewModel
+import com.example.playverse.ui.theme.PlayVerseBackground
+import com.example.playverse.ui.theme.PlayVerseBrandBlue
+import com.example.playverse.ui.theme.PlayVerseTextPrimary
+import com.example.playverse.ui.theme.PlayVerseTextSecondary
+import com.example.playverse.ui.theme.PlayVerseTextSubtle
 
-/**
- * SCREEN: AllGamesScreen (Trang Tất cả Game hỗ trợ Lọc Danh Mục & Tìm Kiếm)
- * VỊ TRÍ: presentation/screen/AllGamesScreen.kt
- */
 @Composable
 fun AllGamesScreen(
     modifier: Modifier = Modifier,
@@ -46,22 +46,19 @@ fun AllGamesScreen(
     var isSearchVisible by remember { mutableStateOf(false) }
     var selectedCategory by remember { mutableStateOf("Tất cả") }
 
-    val backgroundColor = Color(0xFFF4F7FC)
-    val primaryTextColor = Color(0xFF191C24)
-    val secondaryTextColor = Color(0xFF8A94A6)
-    val actionColor = Color(0xFF0066FF)
-
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(backgroundColor)
+            .background(PlayVerseBackground)
     ) {
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
         ) {
             // HEADER WITH SEARCH TOGGLE
             AllGamesHeader(
-                title = "Tất cả Game",
+                title = "PlayVerse",
                 searchQuery = searchQuery,
                 onSearchQueryChange = { searchQuery = it },
                 isSearchVisible = isSearchVisible,
@@ -122,8 +119,8 @@ fun AllGamesScreen(
                                         text = category,
                                         isSelected = selectedCategory == category,
                                         onSelect = { selectedCategory = category },
-                                        actionColor = actionColor,
-                                        primaryTextColor = primaryTextColor
+                                        actionColor = PlayVerseBrandBlue,
+                                        primaryTextColor = PlayVerseTextPrimary
                                     )
                                 }
                             }
@@ -164,7 +161,7 @@ fun AllGamesScreen(
                                     Icon(
                                         imageVector = Icons.Outlined.SearchOff,
                                         contentDescription = "No results",
-                                        tint = secondaryTextColor,
+                                        tint = PlayVerseTextSubtle,
                                         modifier = Modifier.size(56.dp)
                                     )
                                     Spacer(modifier = Modifier.height(16.dp))
@@ -172,13 +169,13 @@ fun AllGamesScreen(
                                         text = "Không tìm thấy game phù hợp",
                                         fontSize = 18.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = primaryTextColor
+                                        color = PlayVerseTextPrimary
                                     )
                                     Spacer(modifier = Modifier.height(6.dp))
                                     Text(
                                         text = "Thử tìm kiếm với từ khóa khác hoặc bỏ chọn bộ lọc danh mục.",
                                         fontSize = 13.sp,
-                                        color = secondaryTextColor,
+                                        color = PlayVerseTextSubtle,
                                         textAlign = androidx.compose.ui.text.style.TextAlign.Center
                                     )
                                     Spacer(modifier = Modifier.height(20.dp))
@@ -188,7 +185,7 @@ fun AllGamesScreen(
                                             selectedCategory = "Tất cả"
                                         },
                                         shape = RoundedCornerShape(12.dp),
-                                        colors = ButtonDefaults.buttonColors(containerColor = actionColor)
+                                        colors = ButtonDefaults.buttonColors(containerColor = PlayVerseBrandBlue)
                                     ) {
                                         Text("Xóa bộ lọc", color = Color.White, fontWeight = FontWeight.Bold)
                                     }
@@ -201,12 +198,12 @@ fun AllGamesScreen(
                             modifier = Modifier.align(Alignment.Center),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            CircularProgressIndicator(color = actionColor)
+                            CircularProgressIndicator(color = PlayVerseBrandBlue)
                             Spacer(modifier = Modifier.height(12.dp))
                             Text(
                                 text = "Đang tải danh sách game...",
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = secondaryTextColor
+                                color = PlayVerseTextSubtle
                             )
                         }
                     }
@@ -223,15 +220,6 @@ fun AllGamesScreen(
                 }
             }
         }
-
-        BottomNavBar(
-            modifier = Modifier.align(Alignment.BottomCenter),
-            selectedTab = "",
-            onTabSelected = onTabSelected,
-            onCenterSearchClick = {
-                isSearchVisible = true
-            }
-        )
     }
 }
 

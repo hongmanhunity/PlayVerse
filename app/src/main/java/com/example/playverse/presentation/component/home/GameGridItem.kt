@@ -1,4 +1,4 @@
-package com.example.playverse.presentation.component.home
+﻿package com.example.playverse.presentation.component.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,10 +19,6 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.playverse.domain.model.Game
 
-/**
- * COMPONENT HOME: GameGridItem
- * VỊ TRÍ: presentation/component/home/GameGridItem.kt
- */
 @Composable
 fun GameGridItem(
     game: Game,

@@ -1,4 +1,4 @@
-package com.example.playverse.presentation.component.auth
+﻿package com.example.playverse.presentation.component.auth
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -17,10 +17,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-/**
- * COMPONENT AUTH: AuthTextField (Đơn giản - Cơ bản - Xanh/Trắng)
- * VỊ TRÍ: presentation/component/auth/AuthTextField.kt
- */
 @Composable
 fun AuthTextField(
     value: String,

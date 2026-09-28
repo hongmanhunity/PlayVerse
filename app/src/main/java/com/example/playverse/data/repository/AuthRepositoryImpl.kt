@@ -19,8 +19,8 @@ class AuthRepositoryImpl(
             val response = authApiService.login(LoginRequestDto(email = email, password = password))
             if (response.isSuccessful && response.body() != null) {
                 val body = response.body()!!
-                val token = body.token ?: body.accessToken ?: ""
                 val userData = body.user ?: body.data
+                val token = body.token ?: body.accessToken ?: userData?.token ?: ""
                 val user = User(
                     id = userData?.id ?: userData?.userId ?: "",
                     name = userData?.name ?: userData?.fullName ?: userData?.username ?: email.substringBefore("@"),
@@ -52,8 +52,8 @@ class AuthRepositoryImpl(
             )
             if (response.isSuccessful && response.body() != null) {
                 val body = response.body()!!
-                val token = body.token ?: body.accessToken ?: ""
                 val userData = body.user ?: body.data
+                val token = body.token ?: body.accessToken ?: userData?.token ?: ""
                 val user = User(
                     id = userData?.id ?: userData?.userId ?: "",
                     name = userData?.name ?: userData?.fullName ?: userData?.username ?: name.ifEmpty { email.substringBefore("@") },
@@ -76,22 +76,38 @@ class AuthRepositoryImpl(
         email: String,
         name: String?,
         avatar: String?,
-        googleId: String?
+        googleId: String?,
+        idToken: String?
     ): Result<User> {
         return try {
             val response = authApiService.googleAuth(
-                GoogleAuthRequestDto(email = email, name = name, avatar = avatar, googleId = googleId)
+                GoogleAuthRequestDto(
+                    email = email,
+                    name = name,
+                    avatar = avatar,
+                    googleId = googleId,
+                    idToken = idToken
+                )
             )
             if (response.isSuccessful && response.body() != null) {
                 val body = response.body()!!
-                val token = body.token ?: body.accessToken ?: ""
                 val userData = body.user ?: body.data
+                val token = body.token ?: body.accessToken ?: userData?.token ?: ""
+                val displayName = userData?.name?.takeIf { it.isNotBlank() }
+                    ?: userData?.fullName?.takeIf { it.isNotBlank() }
+                    ?: name?.takeIf { it.isNotBlank() }
+                    ?: userData?.username
+                    ?: email.substringBefore("@")
+                val finalAvatar = userData?.avatar?.takeIf { it.isNotBlank() }
+                    ?: userData?.avatarUrl?.takeIf { it.isNotBlank() }
+                    ?: avatar
+
                 val user = User(
                     id = userData?.id ?: userData?.userId ?: "",
-                    name = userData?.name ?: userData?.fullName ?: userData?.username ?: email.substringBefore("@"),
+                    name = displayName,
                     email = userData?.email ?: email,
                     token = token,
-                    avatarUrl = userData?.avatar ?: userData?.avatarUrl
+                    avatarUrl = finalAvatar
                 )
                 userPreferences.saveUser(user)
                 Result.success(user)

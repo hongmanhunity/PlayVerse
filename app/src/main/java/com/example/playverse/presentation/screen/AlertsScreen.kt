@@ -1,4 +1,4 @@
-package com.example.playverse.presentation.screen
+﻿package com.example.playverse.presentation.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -20,14 +20,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.playverse.domain.model.NotificationItem
-import com.example.playverse.presentation.component.common.BottomNavBar
+import com.example.playverse.presentation.component.common.PlayVerseHeader
+import com.example.playverse.presentation.state.NotificationUiState
 import com.example.playverse.presentation.viewmodel.CommunityViewModel
-import com.example.playverse.presentation.viewmodel.NotificationUiState
+import com.example.playverse.ui.theme.PlayVerseBrandBlue
+import com.example.playverse.ui.theme.PlayVerseDivider
+import com.example.playverse.ui.theme.PlayVerseErrorRed
+import com.example.playverse.ui.theme.PlayVerseTextPrimary
+import com.example.playverse.ui.theme.PlayVerseTextSecondary
+import com.example.playverse.ui.theme.PlayVerseWarningAmber
 
-/**
- * SCREEN: AlertsScreen (Thông Báo & Tin Tức Khuyến Mãi)
- * VỊ TRÍ: presentation/screen/AlertsScreen.kt
- */
 @Composable
 fun AlertsScreen(
     modifier: Modifier = Modifier,
@@ -36,9 +38,6 @@ fun AlertsScreen(
     onCenterSearchClick: () -> Unit = {}
 ) {
     val notificationState by viewModel.notificationsState.collectAsState()
-
-    val primaryTextColor = Color(0xFF191C24)
-    val brandBlue = Color(0xFF0066FF)
 
     Box(
         modifier = modifier
@@ -50,22 +49,10 @@ fun AlertsScreen(
                 .fillMaxSize()
                 .statusBarsPadding()
         ) {
-            // Header
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Thông Báo & Ưu Đãi",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = primaryTextColor
-                )
-            }
+            // Header PlayVerse
+            PlayVerseHeader()
 
-            HorizontalDivider(color = Color(0xFFF1F5F9))
+            HorizontalDivider(color = PlayVerseDivider)
 
             Box(
                 modifier = Modifier
@@ -75,7 +62,7 @@ fun AlertsScreen(
                 when (val state = notificationState) {
                     is NotificationUiState.Loading -> {
                         CircularProgressIndicator(
-                            color = brandBlue,
+                            color = PlayVerseBrandBlue,
                             modifier = Modifier.align(Alignment.Center)
                         )
                     }
@@ -104,19 +91,11 @@ fun AlertsScreen(
                 }
             }
         }
-
-        BottomNavBar(
-            modifier = Modifier.align(Alignment.BottomCenter),
-            selectedTab = "Alerts",
-            onTabSelected = onTabSelected,
-            onCenterSearchClick = onCenterSearchClick
-        )
     }
 }
 
 @Composable
 private fun NotificationCardItem(item: NotificationItem) {
-    val brandBlue = Color(0xFF0066FF)
 
     val icon = when (item.type) {
         "promotion" -> Icons.Outlined.ConfirmationNumber
@@ -125,9 +104,9 @@ private fun NotificationCardItem(item: NotificationItem) {
     }
 
     val badgeColor = when (item.type) {
-        "promotion" -> Color(0xFFEF4444)
-        "event" -> Color(0xFFF59E0B)
-        else -> brandBlue
+        "promotion" -> PlayVerseErrorRed
+        "event" -> PlayVerseWarningAmber
+        else -> PlayVerseBrandBlue
     }
 
     Row(

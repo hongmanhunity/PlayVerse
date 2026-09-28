@@ -1,25 +1,29 @@
-package com.example.playverse.presentation.component.gamedetail
+﻿package com.example.playverse.presentation.component.gamedetail
 
+import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Link
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.playverse.domain.model.Game
 
-/**
- * COMPONENT GAMEDETAIL: GameDetailDescriptionSection & LightInfoBox
- * VỊ TRÍ: presentation/component/gamedetail/GameDetailDescriptionSection.kt
- */
 @Composable
 fun GameDetailDescriptionSection(
     game: Game,
@@ -52,34 +56,27 @@ fun GameDetailDescriptionSection(
                 "Trải nghiệm siêu phẩm game với đồ họa cực đỉnh, lối chơi hấp dẫn và hệ thống nhiệm vụ đa dạng. Tham gia ngay vào thế giới PlayVerse để khám phá những khoảnh khắc giải trí tuyệt vời nhất cùng bạn bè!"
             }
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(width = 1.dp, color = borderColor, shape = RoundedCornerShape(18.dp))
-                    .clip(RoundedCornerShape(18.dp))
-                    .background(cardBg)
-                    .padding(18.dp)
+            Column(
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Column {
-                    Text(
-                        text = fullDesc,
-                        fontSize = 14.sp,
-                        color = bodyText,
-                        lineHeight = 22.sp,
-                        maxLines = if (isExpanded) Int.MAX_VALUE else 4,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                Text(
+                    text = fullDesc,
+                    fontSize = 14.sp,
+                    color = bodyText,
+                    lineHeight = 22.sp,
+                    maxLines = if (isExpanded) Int.MAX_VALUE else 4,
+                    overflow = TextOverflow.Ellipsis
+                )
 
-                    if (fullDesc.length > 120) {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = if (isExpanded) "Thu gọn" else "Xem thêm",
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = actionBlue,
-                            modifier = Modifier.clickable { isExpanded = !isExpanded }
-                        )
-                    }
+                if (fullDesc.length > 120) {
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = if (isExpanded) "Thu gọn" else "Xem thêm",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = actionBlue,
+                        modifier = Modifier.clickable { isExpanded = !isExpanded }
+                    )
                 }
             }
         }
@@ -134,7 +131,6 @@ private fun LightInfoBox(
 ) {
     Box(
         modifier = modifier
-            .border(width = 1.dp, color = borderColor, shape = RoundedCornerShape(16.dp))
             .clip(RoundedCornerShape(16.dp))
             .background(cardBg)
             .padding(14.dp)

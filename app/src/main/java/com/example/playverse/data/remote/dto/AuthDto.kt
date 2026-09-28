@@ -19,7 +19,8 @@ data class GoogleAuthRequestDto(
     @SerializedName("email") val email: String,
     @SerializedName("name") val name: String? = null,
     @SerializedName("avatar") val avatar: String? = null,
-    @SerializedName("googleId") val googleId: String? = null
+    @SerializedName("googleId") val googleId: String? = null,
+    @SerializedName("idToken") val idToken: String? = null
 )
 
 data class UserDto(
@@ -30,7 +31,8 @@ data class UserDto(
     @SerializedName("username") val username: String? = null,
     @SerializedName("email") val email: String? = null,
     @SerializedName("avatar") val avatar: String? = null,
-    @SerializedName("avatarUrl") val avatarUrl: String? = null
+    @SerializedName("avatarUrl") val avatarUrl: String? = null,
+    @SerializedName("token") val token: String? = null
 )
 
 data class AuthResponseDto(

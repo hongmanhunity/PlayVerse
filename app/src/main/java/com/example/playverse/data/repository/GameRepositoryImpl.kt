@@ -37,4 +37,13 @@ data class GameRepositoryImpl(
         }
         return emptyList()
     }
+
+    override suspend fun getGameById(id: String): Game? {
+        val response = apiService.getGameById(id)
+        if (response.isSuccessful && response.body() != null) {
+            val body = response.body()
+            return body?.data?.toDomain()
+        }
+        return null
+    }
 }

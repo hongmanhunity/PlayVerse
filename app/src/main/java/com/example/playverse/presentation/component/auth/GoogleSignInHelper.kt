@@ -1,4 +1,4 @@
-package com.example.playverse.presentation.component.auth
+﻿package com.example.playverse.presentation.component.auth
 
 import android.content.Intent
 import android.widget.Toast
@@ -13,22 +13,26 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 
-/**
- * HELPER: rememberGoogleSignInLauncher
- * Gọi trực tiếp SDK Google Play Services chính thức để hiển thị bảng chọn tài khoản Google của Android System
- */
+const val GOOGLE_WEB_CLIENT_ID = "703356444680-c718sp594779pgojnvd4s698acbmqs4r.apps.googleusercontent.com"
+
 @Composable
 fun rememberGoogleSignInLauncher(
-    onGoogleSignInSuccess: (email: String, name: String?, avatar: String?, googleId: String?) -> Unit
+    webClientId: String? = GOOGLE_WEB_CLIENT_ID.ifEmpty { null },
+    onGoogleSignInSuccess: (email: String, name: String?, avatar: String?, idToken: String?, googleId: String?) -> Unit
 ): () -> Unit {
     val context = LocalContext.current
 
-    val googleSignInOptions = remember {
-        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+    val googleSignInOptions = remember(webClientId) {
+        val builder = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
             .requestProfile()
             .requestId()
-            .build()
+
+        if (!webClientId.isNullOrEmpty()) {
+            builder.requestIdToken(webClientId)
+        }
+
+        builder.build()
     }
 
     val googleSignInClient = remember(context, googleSignInOptions) {
@@ -42,11 +46,14 @@ fun rememberGoogleSignInLauncher(
         try {
             val account = task.getResult(ApiException::class.java)
             if (account != null && !account.email.isNullOrEmpty()) {
+                val realIdToken = account.idToken?.takeIf { it.isNotBlank() }
+                val realGoogleId = account.id?.takeIf { it.isNotBlank() } ?: "google_${account.email}"
                 onGoogleSignInSuccess(
                     account.email!!,
                     account.displayName,
                     account.photoUrl?.toString(),
-                    account.id
+                    realIdToken,
+                    realGoogleId
                 )
             } else {
                 Toast.makeText(context, "Không thể lấy thông tin tài khoản Google", Toast.LENGTH_SHORT).show()
@@ -54,10 +61,11 @@ fun rememberGoogleSignInLauncher(
         } catch (e: ApiException) {
             val errorMsg = when (e.statusCode) {
                 12501 -> "Đã hủy đăng nhập Google"
-                12500 -> "Vui lòng kiểm tra Google Play Services trên thiết bị"
+                12500 -> "Vui lòng kiểm tra Google Play Services trên thiết bị (hoặc SHA-1 fingerprint)"
+                10 -> "Lỗi Cấu Hình Google Sign-In (Thiếu SHA-1 hoặc Web Client ID trong Google Cloud)"
                 else -> "Mã kết quả Google Sign-In: ${e.statusCode}"
             }
-            Toast.makeText(context, errorMsg, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, errorMsg, Toast.LENGTH_LONG).show()
         }
     }
 

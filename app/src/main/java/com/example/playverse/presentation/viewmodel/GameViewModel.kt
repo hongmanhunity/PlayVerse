@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.playverse.data.repository.BannerRepositoryImpl
 import com.example.playverse.data.repository.GameRepositoryImpl
 import com.example.playverse.domain.repository.BannerRepository
+import com.example.playverse.presentation.state.GameDetailUiState
 import com.example.playverse.presentation.state.GameUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,6 +17,9 @@ class GameViewModel(
 ): ViewModel() {
     private val _uiState = MutableStateFlow<GameUiState>(GameUiState.Loading)
     val uiState = _uiState.asStateFlow()
+
+    private val _detailUiState = MutableStateFlow<GameDetailUiState>(GameDetailUiState.Idle)
+    val detailUiState = _detailUiState.asStateFlow()
 
     init {
         getGames()
@@ -38,6 +42,22 @@ class GameViewModel(
                 )
             } catch (e: Exception) {
                 _uiState.value = GameUiState.Error(e.message ?: "Lỗi kết nối API!")
+            }
+        }
+    }
+
+    fun getGameById(id: String) {
+        viewModelScope.launch {
+            _detailUiState.value = GameDetailUiState.Loading
+            try {
+                val game = repositoryImpl.getGameById(id)
+                if (game != null) {
+                    _detailUiState.value = GameDetailUiState.Success(game)
+                } else {
+                    _detailUiState.value = GameDetailUiState.Error("Không tìm thấy game này!")
+                }
+            } catch (e: Exception) {
+                _detailUiState.value = GameDetailUiState.Error(e.message ?: "Lỗi kết nối API!")
             }
         }
     }

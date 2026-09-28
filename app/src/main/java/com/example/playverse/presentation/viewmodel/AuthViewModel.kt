@@ -56,7 +56,13 @@ class AuthViewModel(
         }
     }
 
-    fun loginWithGoogle(email: String, name: String? = null, avatar: String? = null) {
+    fun loginWithGoogle(
+        email: String,
+        name: String? = null,
+        avatar: String? = null,
+        idToken: String? = null,
+        googleId: String? = null
+    ) {
         if (email.isBlank()) {
             _uiState.value = AuthUiState.Error("Email Google không hợp lệ!")
             return
@@ -64,12 +70,13 @@ class AuthViewModel(
 
         viewModelScope.launch {
             _uiState.value = AuthUiState.Loading
-            val googleId = "google_${email.trim()}"
+            val finalGoogleId = googleId?.takeIf { it.isNotBlank() } ?: "google_${email.trim()}"
             val result = authRepository.loginWithGoogle(
                 email = email.trim(),
                 name = name?.trim(),
                 avatar = avatar,
-                googleId = googleId
+                googleId = finalGoogleId,
+                idToken = idToken?.takeIf { it.isNotBlank() }
             )
             result.onSuccess { user ->
                 _currentUser.value = user

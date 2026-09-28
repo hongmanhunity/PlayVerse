@@ -1,4 +1,4 @@
-package com.example.playverse.presentation.screen
+﻿package com.example.playverse.presentation.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -12,47 +12,41 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.playverse.domain.model.Banner
 import com.example.playverse.domain.model.Game
-import com.example.playverse.presentation.component.common.BottomNavBar
+import com.example.playverse.presentation.component.common.PlayVerseHeader
 import com.example.playverse.presentation.component.home.HomeBanner
 import com.example.playverse.presentation.component.home.HomeGameGridSection
-import com.example.playverse.presentation.component.home.HomeHeader
 import com.example.playverse.presentation.state.GameUiState
 import com.example.playverse.presentation.viewmodel.GameViewModel
+import com.example.playverse.ui.theme.PlayVerseBackground
+import com.example.playverse.ui.theme.PlayVerseBrandBlue
+import com.example.playverse.ui.theme.PlayVerseTextSubtle
 
-/**
- * SCREEN: HomeScreen (Trang chủ)
- * VỊ TRÍ: presentation/screen/HomeScreen.kt
- */
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: GameViewModel,
     onNavigateToAllGames: () -> Unit = {},
+    onFavoriteClick: () -> Unit = {},
     onTabSelected: (String) -> Unit = {},
-    onGameClick: (Game) -> Unit = {}
+    onGameClick: (Game) -> Unit = {},
+    onBannerClick: (Banner) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
-
-    val backgroundColor = Color(0xFFF4F7FC)
-    val secondaryTextColor = Color(0xFF8A94A6)
-    val actionColor = Color(0xFF0066FF)
 
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(backgroundColor)
+            .background(PlayVerseBackground)
     ) {
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
         ) {
-            HomeHeader(
-                title = "Game",
-                onNotificationClick = { },
-                onSearchClick = onNavigateToAllGames
-            )
+            PlayVerseHeader()
 
             Box(
                 modifier = Modifier
@@ -69,7 +63,10 @@ fun HomeScreen(
                                 .padding(bottom = 100.dp),
                             verticalArrangement = Arrangement.spacedBy(24.dp)
                         ) {
-                            HomeBanner(banners = state.banners)
+                            HomeBanner(
+                                banners = state.banners,
+                                onBannerClick = onBannerClick
+                            )
 
                             HomeGameGridSection(
                                 title = "Popular Game",
@@ -91,12 +88,12 @@ fun HomeScreen(
                             modifier = Modifier.align(Alignment.Center),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            CircularProgressIndicator(color = actionColor)
+                            CircularProgressIndicator(color = PlayVerseBrandBlue)
                             Spacer(modifier = Modifier.height(12.dp))
                             Text(
                                 text = "Đang tải trang Home...",
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = secondaryTextColor
+                                color = PlayVerseTextSubtle
                             )
                         }
                     }
@@ -113,12 +110,5 @@ fun HomeScreen(
                 }
             }
         }
-
-        BottomNavBar(
-            modifier = Modifier.align(Alignment.BottomCenter),
-            selectedTab = "Home",
-            onTabSelected = onTabSelected,
-            onCenterSearchClick = onNavigateToAllGames
-        )
     }
 }

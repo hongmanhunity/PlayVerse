@@ -1,7 +1,6 @@
-package com.example.playverse.presentation.component.gamedetail
+﻿package com.example.playverse.presentation.component.gamedetail
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -23,10 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.playverse.domain.model.Game
 
-/**
- * COMPONENT GAMEDETAIL: GameDetailQuickStats
- * VỊ TRÍ: presentation/component/gamedetail/GameDetailQuickStats.kt
- */
 @Composable
 fun GameDetailQuickStats(
     game: Game,
@@ -106,7 +101,6 @@ private fun StatCard(
 ) {
     Box(
         modifier = modifier
-            .border(width = 1.dp, color = borderColor, shape = RoundedCornerShape(16.dp))
             .clip(RoundedCornerShape(16.dp))
             .background(cardBg)
             .padding(vertical = 12.dp, horizontal = 6.dp),

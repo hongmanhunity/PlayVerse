@@ -14,10 +14,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.activity.viewModels
 import com.example.playverse.data.api.RetrofitInstance
 import com.example.playverse.data.repository.GameRepositoryImpl
-import com.example.playverse.presentation.screen.GameScreen
+import com.example.playverse.presentation.navigation.AppNavigation
 import com.example.playverse.presentation.viewmodel.GameViewModel
 import com.example.playverse.presentation.viewmodel.GameViewModelFactory
+import com.example.playverse.ui.theme.PlayVerseBackground
 import com.example.playverse.ui.theme.PlayVerseTheme
+import androidx.compose.material3.Surface
 
 class MainActivity : ComponentActivity() {
 
@@ -28,13 +30,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
             PlayVerseTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    GameScreen(
-                        modifier = Modifier.padding(innerPadding),
-                        viewModel = viewModel
-                    )
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = PlayVerseBackground
+                ) {
+                    AppNavigation(gameViewModel = viewModel)
                 }
             }
         }

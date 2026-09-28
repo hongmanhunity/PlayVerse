@@ -1,4 +1,4 @@
-package com.example.playverse.presentation.component.allgames
+﻿package com.example.playverse.presentation.component.allgames
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -10,22 +10,21 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.playverse.domain.model.Game
 
-/**
- * COMPONENT ALLGAMES: AllGamesItemRow (Căn chỉnh chuẩn Alignment.Top để Title bằng mép trên của ảnh)
- * VỊ TRÍ: presentation/component/allgames/AllGamesItemRow.kt
- */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AllGamesItemRow(
@@ -34,6 +33,33 @@ fun AllGamesItemRow(
     primaryTextColor: Color = Color(0xFF191C24),
     secondaryTextColor: Color = Color(0xFF8A94A6)
 ) {
+    val context = LocalContext.current
+
+    // Cache Tag List parsing so regex operations do not run on every scroll frame
+    val tagList = remember(game.category, game.tags, game.publisher) {
+        buildList {
+            if (game.category.isNotEmpty()) {
+                addAll(game.category.split(Regex("[,/\\-]")).map { it.trim() }.filter { it.isNotEmpty() })
+            }
+            game.tags.forEach { rawTag ->
+                addAll(rawTag.split(Regex("[,/\\-]")).map { it.trim() }.filter { it.isNotEmpty() })
+            }
+        }.distinct().take(3).ifEmpty { if (game.publisher.isNotEmpty()) listOf(game.publisher) else listOf("Action") }
+    }
+
+    // Cache formatted rating string
+    val formattedRating = remember(game.averageRating) {
+        String.format(java.util.Locale.US, "%.1f", game.averageRating)
+    }
+
+    // Cache Coil Image Request with crossfade
+    val imageRequest = remember(game.thumbnail) {
+        ImageRequest.Builder(context)
+            .data(game.thumbnail.ifEmpty { "https://images.unsplash.com/photo-1542751371-adc38448a05e" })
+            .crossfade(true)
+            .build()
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -41,7 +67,7 @@ fun AllGamesItemRow(
         verticalAlignment = Alignment.Top
     ) {
         AsyncImage(
-            model = game.thumbnail.ifEmpty { "https://images.unsplash.com/photo-1542751371-adc38448a05e" },
+            model = imageRequest,
             contentDescription = game.title,
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -66,22 +92,13 @@ fun AllGamesItemRow(
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            val tagList = buildList {
-                if (game.category.isNotEmpty()) {
-                    addAll(game.category.split(Regex("[,/\\-]")).map { it.trim() }.filter { it.isNotEmpty() })
-                }
-                game.tags.forEach { rawTag ->
-                    addAll(rawTag.split(Regex("[,/\\-]")).map { it.trim() }.filter { it.isNotEmpty() })
-                }
-            }.distinct().ifEmpty { if (game.publisher.isNotEmpty()) listOf(game.publisher) else listOf("Action") }
-
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
                 maxItemsInEachRow = 3,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                tagList.take(3).forEach { tagText ->
+                tagList.forEach { tagText ->
                     TagChip(text = tagText)
                 }
             }
@@ -92,7 +109,7 @@ fun AllGamesItemRow(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = String.format("%.1f", game.averageRating),
+                    text = formattedRating,
                     fontSize = 13.sp,
                     color = secondaryTextColor,
                     fontWeight = FontWeight.Medium

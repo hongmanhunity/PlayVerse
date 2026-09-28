@@ -1,4 +1,4 @@
-package com.example.playverse.presentation.component.gamedetail
+﻿package com.example.playverse.presentation.component.gamedetail
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
@@ -29,10 +29,6 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.playverse.domain.model.Game
 
-/**
- * COMPONENT GAMEDETAIL: GameDetailHeroBanner
- * VỊ TRÍ: presentation/component/gamedetail/GameDetailHeroBanner.kt
- */
 @Composable
 fun GameDetailHeroBanner(
     game: Game,

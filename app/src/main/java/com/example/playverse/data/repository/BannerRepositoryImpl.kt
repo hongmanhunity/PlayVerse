@@ -1,4 +1,4 @@
-package com.example.playverse.data.repository
+﻿package com.example.playverse.data.repository
 
 import com.example.playverse.data.api.RetrofitInstance
 import com.example.playverse.data.mapper.toDomain
@@ -6,10 +6,6 @@ import com.example.playverse.data.remote.api.BannerApiService
 import com.example.playverse.domain.model.Banner
 import com.example.playverse.domain.repository.BannerRepository
 
-/**
- * REPOSITORY IMPLEMENTATION: BannerRepositoryImpl
- * VỊ TRÍ: data/repository/BannerRepositoryImpl.kt
- */
 class BannerRepositoryImpl(
     private val apiService: BannerApiService = RetrofitInstance.bannerApi
 ) : BannerRepository {

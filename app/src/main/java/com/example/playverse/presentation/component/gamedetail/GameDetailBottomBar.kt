@@ -1,4 +1,4 @@
-package com.example.playverse.presentation.component.gamedetail
+﻿package com.example.playverse.presentation.component.gamedetail
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -21,10 +21,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-/**
- * COMPONENT GAMEDETAIL: GameDetailBottomBar
- * VỊ TRÍ: presentation/component/gamedetail/GameDetailBottomBar.kt
- */
 @Composable
 fun GameDetailBottomBar(
     isDownloading: Boolean,
@@ -45,6 +41,7 @@ fun GameDetailBottomBar(
                     )
                 )
             )
+            .navigationBarsPadding()
             .padding(horizontal = 20.dp, vertical = 16.dp)
     ) {
         Button(

@@ -1,4 +1,4 @@
-package com.example.playverse.presentation.component.allgames
+﻿package com.example.playverse.presentation.component.allgames
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -29,10 +29,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-/**
- * COMPONENT ALLGAMES: AllGamesHeader (Hỗ trợ Tìm kiếm và Thông báo)
- * VỊ TRÍ: presentation/component/allgames/AllGamesHeader.kt
- */
 @Composable
 fun AllGamesHeader(
     title: String = "Tất cả Game",

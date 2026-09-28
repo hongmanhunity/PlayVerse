@@ -1,4 +1,4 @@
-package com.example.playverse.presentation.screen
+﻿package com.example.playverse.presentation.screen
 
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -29,13 +29,13 @@ import com.example.playverse.presentation.component.auth.AuthButton
 import com.example.playverse.presentation.component.auth.AuthHeader
 import com.example.playverse.presentation.component.auth.AuthTextField
 import com.example.playverse.presentation.component.auth.GoogleAuthButton
-import com.example.playverse.presentation.state.AuthUiState
-
-/**
- * SCREEN: RegisterScreen (Đơn giản - Tích hợp Nút Google Auth)
- * VỊ TRÍ: presentation/screen/RegisterScreen.kt
- */
 import com.example.playverse.presentation.component.auth.rememberGoogleSignInLauncher
+import com.example.playverse.presentation.state.AuthUiState
+import com.example.playverse.ui.theme.PlayVerseBorder
+import com.example.playverse.ui.theme.PlayVerseBrandBlue
+import com.example.playverse.ui.theme.PlayVerseErrorRed
+import com.example.playverse.ui.theme.PlayVerseTextMuted
+import com.example.playverse.ui.theme.PlayVerseTextSecondary
 
 @Composable
 fun RegisterScreen(
@@ -43,7 +43,7 @@ fun RegisterScreen(
     uiState: AuthUiState = AuthUiState.Idle,
     onBackClick: () -> Unit = {},
     onRegisterSubmit: (name: String, email: String, pass: String) -> Unit = { _, _, _ -> },
-    onGoogleLoginSubmit: (email: String, name: String?, avatar: String?) -> Unit = { _, _, _ -> },
+    onGoogleLoginSubmit: (email: String, name: String?, avatar: String?, idToken: String?, googleId: String?) -> Unit = { _, _, _, _, _ -> },
     onNavigateToLogin: () -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -54,12 +54,9 @@ fun RegisterScreen(
     var isPasswordVisible by remember { mutableStateOf(false) }
     var localError by remember { mutableStateOf("") }
 
-    val launchGoogleSignIn = rememberGoogleSignInLauncher { gEmail, gName, gAvatar, _ ->
-        onGoogleLoginSubmit(gEmail, gName, gAvatar)
+    val launchGoogleSignIn = rememberGoogleSignInLauncher { gEmail, gName, gAvatar, idToken, googleId ->
+        onGoogleLoginSubmit(gEmail, gName, gAvatar, idToken, googleId)
     }
-
-    val brandBlue = Color(0xFF0066FF)
-    val secondaryText = Color(0xFF64748B)
 
     val isLoading = uiState is AuthUiState.Loading
     val apiError = (uiState as? AuthUiState.Error)?.errorMessage
@@ -88,7 +85,7 @@ fun RegisterScreen(
             if (!displayError.isNullOrEmpty()) {
                 Text(
                     text = displayError,
-                    color = Color(0xFFEF4444),
+                    color = PlayVerseErrorRed,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier.padding(bottom = 12.dp)
@@ -124,7 +121,7 @@ fun RegisterScreen(
                         Icon(
                             imageVector = if (isPasswordVisible) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
                             contentDescription = "Toggle Password",
-                            tint = secondaryText
+                            tint = PlayVerseTextSecondary
                         )
                     }
                 },
@@ -178,18 +175,18 @@ fun RegisterScreen(
             ) {
                 HorizontalDivider(
                     modifier = Modifier.weight(1f),
-                    color = Color(0xFFE2E8F0),
+                    color = PlayVerseBorder,
                     thickness = 1.dp
                 )
                 Text(
                     text = "Hoặc",
                     fontSize = 13.sp,
-                    color = Color(0xFF94A3B8),
+                    color = PlayVerseTextMuted,
                     modifier = Modifier.padding(horizontal = 12.dp)
                 )
                 HorizontalDivider(
                     modifier = Modifier.weight(1f),
-                    color = Color(0xFFE2E8F0),
+                    color = PlayVerseBorder,
                     thickness = 1.dp
                 )
             }
@@ -198,6 +195,8 @@ fun RegisterScreen(
 
             GoogleAuthButton(
                 text = "Đăng ký với Google",
+                isLoading = isLoading,
+                enabled = !isLoading,
                 onClick = { launchGoogleSignIn() }
             )
 
@@ -213,13 +212,13 @@ fun RegisterScreen(
                 Text(
                     text = "Đã có tài khoản? ",
                     fontSize = 14.sp,
-                    color = secondaryText
+                    color = PlayVerseTextSecondary
                 )
                 Text(
                     text = "Đăng nhập ngay",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    color = brandBlue,
+                    color = PlayVerseBrandBlue,
                     modifier = Modifier.clickable { onNavigateToLogin() }
                 )
             }

@@ -1,4 +1,4 @@
-package com.example.playverse.presentation.component.auth
+﻿package com.example.playverse.presentation.component.auth
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,10 +14,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-/**
- * COMPONENT AUTH: AuthButton (Đơn giản - Cơ bản - Xanh/Trắng)
- * VỊ TRÍ: presentation/component/auth/AuthButton.kt
- */
 @Composable
 fun AuthButton(
     text: String,

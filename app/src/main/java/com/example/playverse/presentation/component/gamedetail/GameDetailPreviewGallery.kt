@@ -1,7 +1,6 @@
-package com.example.playverse.presentation.component.gamedetail
+﻿package com.example.playverse.presentation.component.gamedetail
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -27,10 +26,6 @@ import androidx.compose.ui.window.DialogProperties
 import coil.compose.AsyncImage
 import com.example.playverse.domain.model.Game
 
-/**
- * COMPONENT GAMEDETAIL: GameDetailPreviewGallery (Bộ sưu tập ảnh Preview 4-5 ảnh)
- * VỊ TRÍ: presentation/component/gamedetail/GameDetailPreviewGallery.kt
- */
 @Composable
 fun GameDetailPreviewGallery(
     game: Game,
@@ -88,7 +83,6 @@ fun GameDetailPreviewGallery(
                     modifier = Modifier
                         .width(220.dp)
                         .height(130.dp)
-                        .border(width = 1.dp, color = borderColor, shape = RoundedCornerShape(16.dp))
                         .clip(RoundedCornerShape(16.dp))
                         .clickable { selectedImageUrl = imageUrl }
                 ) {

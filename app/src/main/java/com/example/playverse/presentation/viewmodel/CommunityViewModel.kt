@@ -6,21 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.playverse.domain.model.NotificationItem
 import com.example.playverse.domain.model.Post
 import com.example.playverse.domain.repository.CommunityRepository
+import com.example.playverse.presentation.state.CommunityUiState
+import com.example.playverse.presentation.state.NotificationUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-
-sealed interface CommunityUiState {
-    object Loading : CommunityUiState
-    data class Success(val posts: List<Post>) : CommunityUiState
-    data class Error(val message: String) : CommunityUiState
-}
-
-sealed interface NotificationUiState {
-    object Loading : NotificationUiState
-    data class Success(val notifications: List<NotificationItem>) : NotificationUiState
-    data class Error(val message: String) : NotificationUiState
-}
 
 class CommunityViewModel(
     private val repository: CommunityRepository
