@@ -8,7 +8,8 @@
 
 File APK đã được biên dịch hoàn tất ở chế độ **Release**, đã ký sẵn và có thể tải về cài đặt trực tiếp trên thiết bị Android:
 
-* **File cài đặt:** [`release/PlayVerse-v1.0-release.apk`](release/PlayVerse-v1.0-release.apk)
+* **File cài đặt trực tiếp:** [`release/PlayVerse-v1.0-release.apk`](release/PlayVerse-v1.0-release.apk)
+* **Tải từ GitHub Releases:** [PlayVerse-v1.0-release.apk](https://github.com/hongmanhunity/PlayVerse/releases/download/v1.0.0/PlayVerse-v1.0-release.apk)
 * **Dung lượng:** ~14.2 MB
 * **Hỗ trợ:** Android 7.0 (API 24) trở lên
 
