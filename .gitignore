@@ -4,6 +4,7 @@
 *.ap_
 *.aab
 *.dex
+!release/*.apk
 
 # Java & Kotlin class files
 *.class
